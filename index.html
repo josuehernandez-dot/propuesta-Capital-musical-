@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Capital Musical · Propuesta de mejoras</title>
-<meta name="description" content="Propuesta de mejoras para capitalmusical.com.mx: el sitio actual y 6 cambios pequeños, cada uno con su porqué.">
+<title>Capital Musical · Propuesta de rediseño</title>
+<meta name="description" content="Propuesta de rediseño para capitalmusical.com.mx: el sitio actual y la propuesta, con cada cambio y su porqué.">
 <link rel="preload" href="assets/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
 </head>
@@ -32,6 +32,12 @@
   <symbol id="i-arc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M13 9l3 3-3 3"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.500" width="14" height="10" rx="2"/><path d="M8 10.500V7.500a4 4 0 0 1 8 0v3"/></symbol>
   <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7.500h8M8 12h2M14 12h2M8 16h2M14 16h2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.200-7-11.500a7 7 0 0 1 14 0C19 14.800 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.500l3.500 2"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.500 6.500a4 4 0 0 0 5 5L10 21a2.100 2.100 0 0 1-3-3l9.500-9.500a4 4 0 0 0-2-2z" transform="rotate(0)"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
 </svg>
 
 <!-- ============ BARRA DE LA PROPUESTA (no es parte del sitio) ============ -->
@@ -41,7 +47,7 @@
     <button id="mA" aria-pressed="false">Actual</button>
     <button id="mP" aria-pressed="true">Propuesta</button>
   </div>
-  <button class="pbtn" id="openPanel" aria-expanded="false">Ver cambios <b>6</b></button>
+  <button class="pbtn" id="openPanel" aria-expanded="false">Ver cambios <b id="chgCount">14</b></button>
 </div>
 
 <!-- ============ SITIO ============ -->
@@ -77,9 +83,9 @@
         <li><button class="t" id="tBrand">Marcas <svg class="i"><use href="#i-chev"/></svg></button></li>
       </ul>
       <ul class="right">
-        <li><a href="#" data-soon>Acapulco</a></li>
-        <li><a href="#" data-soon>Cuernavaca</a></li>
-        <li><a href="#" data-soon>Huatulco</a></li>
+        <li><a href="#" data-store="aca">Acapulco</a></li>
+        <li><a href="#" data-store="cue">Cuernavaca</a></li>
+        <li><a href="#" data-store="htl">Huatulco</a></li>
         <li><a href="#" class="wapill" data-wa><svg class="i"><use href="#i-wa"/></svg> Asesoría por WhatsApp</a></li>
       </ul>
     </nav>
@@ -96,20 +102,31 @@
     <a class="hot pill" href="#" data-soon="Colección Roland FP-10: no forma parte de esta propuesta" aria-label="Roland FP-10"></a>
 
     <div class="finder" id="finder">
-      <h2>Encuentra tu instrumento ↓</h2>
+      <h2>Encuentra tu instrumento<span class="v-a"> ↓</span></h2>
       <select class="fs" id="fType" aria-label="Tipo de instrumento"></select>
       <select class="fs" id="fItem" aria-label="Instrumento" disabled></select>
       <button class="fb" id="fGo" type="button">Buscar</button>
       <span class="hint v-p" id="fHint" aria-live="polite"></span>
     </div>
 
-    <div class="trust" id="trust">
+    <div class="trust v-a" id="trust">
       <ul>
         <li><svg class="i"><use href="#i-truck"/></svg><div><b>Envíos a todo México</b><span>Gratis desde $2,000</span></div></li>
-        <li class="v-a"><svg class="i"><use href="#i-card"/></svg><div><b>Tu Compra segura y protegida</b><span>PCI DSS &amp; SSL</span></div></li>
-        <li class="v-p"><svg class="i"><use href="#i-lock"/></svg><div><b>Compra segura</b><span>No guardamos los datos de tu tarjeta</span></div></li>
-        <li class="v-p"><svg class="i"><use href="#i-store"/></svg><div><b>3 tiendas físicas</b><span>Acapulco, Cuernavaca y Huatulco</span></div></li>
+        <li><svg class="i"><use href="#i-card"/></svg><div><b>Tu Compra segura y protegida</b><span>PCI DSS &amp; SSL</span></div></li>
         <li><svg class="i"><use href="#i-wa"/></svg><div><b>Asesoría por WhatsApp</b></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- propuesta: buscador bajo el hero + tarjetas de confianza -->
+  <div class="finder-band v-p" id="finderSlot"><div class="wrap"></div></div>
+  <section class="trustc v-p" id="trustCards" aria-label="Por qué comprar aquí">
+    <div class="wrap">
+      <ul>
+        <li><span class="ic"><svg class="i"><use href="#i-truck"/></svg></span><div><b>Envíos a todo México</b><span>Gratis desde $2,000</span></div></li>
+        <li><span class="ic"><svg class="i"><use href="#i-lock"/></svg></span><div><b>Compra segura</b><span>No guardamos los datos de tu tarjeta</span></div></li>
+        <li><a href="#" data-store="aca" class="lk"><span class="ic"><svg class="i"><use href="#i-store"/></svg></span><div><b>3 tiendas físicas</b><span>Acapulco, Cuernavaca y Huatulco</span></div></a></li>
+        <li><a href="#" data-wa class="lk"><span class="ic wa"><svg class="i"><use href="#i-wa"/></svg></span><div><b>Asesoría por WhatsApp</b><span>Te ayudamos a elegir</span></div></a></li>
       </ul>
     </div>
   </section>
@@ -130,11 +147,18 @@
     </div>
   </section>
 
-  <section class="sec bg-gray cats" aria-labelledby="hCats">
+  <section class="sec bg-gray cats v-a" aria-labelledby="hCats">
     <div class="wrap">
       <h2 class="h" id="hCats" style="margin-bottom:34px">Categorías</h2>
       <div class="car"><div class="circ" id="catTiles"></div></div>
       <div class="prog"><i style="width:50%"></i></div>
+    </div>
+  </section>
+
+  <section class="sec colls v-p" id="secColls" aria-labelledby="hColl">
+    <div class="wrap">
+      <h2 class="h" id="hColl">Compra por colección</h2>
+      <div class="coll-grid" id="collTiles"></div>
     </div>
   </section>
 
@@ -145,7 +169,7 @@
       <div class="guit">
         <div class="mp">
           <img src="assets/img/mercadopago.jpg" alt="Mercado Pago" width="353" height="88">
-          <div class="box"><h3>Compra tu guitarra a 6 MSI, o hasta 12 meses sin tarjeta</h3><p>Compra tu guitarra hoy y págala en mensualidades.</p></div>
+          <div class="box" id="mpBox"><h3>Compra tu guitarra a 6 MSI, o hasta 12 meses sin tarjeta</h3><p>Compra tu guitarra hoy y págala en mensualidades.</p></div>
         </div>
         <div><div class="car g4"><div class="row" id="rowGuit"></div></div><div class="prog"><i></i></div></div>
       </div>
@@ -178,9 +202,14 @@
   </section>
 
   <section class="news" aria-labelledby="hNews">
-    <h2 id="hNews">Suscríbete a nuestro newsletter</h2>
-    <p>Recibe cupón de <b>descuento de 5%</b> para tu siguiente compra</p>
-    <form class="mail" data-form><input type="email" placeholder="Tu correo electrónico" aria-label="Correo electrónico"><button aria-label="Enviar">→</button></form>
+    <div class="nbox" id="newsBox">
+      <div class="nbadge v-p" aria-hidden="true"><b>5%</b><span>de descuento</span></div>
+      <div class="ntxt">
+        <h2 id="hNews">Suscríbete a nuestro newsletter</h2>
+        <p>Recibe cupón de <b>descuento de 5%</b> para tu siguiente compra</p>
+        <form class="mail" data-form><input type="email" placeholder="Tu correo electrónico" aria-label="Correo electrónico"><button aria-label="Enviar"><span class="v-a">→</span><span class="v-p">Quiero mi cupón</span></button></form>
+      </div>
+    </div>
   </section>
 
   <section class="stores" aria-labelledby="hSt">
@@ -192,8 +221,8 @@
 
   <section class="help">
     <div class="wrap cols">
-      <div class="c"><h3>Centro de ayuda</h3><p>Encuentra respuestas inmediatas sobre procesos de pago, tiempos de envío y garantías. Hemos documentado los flujos más comunes para que nada detenga tu ritmo creativo.</p><a class="btn-r" href="#" data-soon>Preguntas Frecuentes</a></div>
-      <div class="c"><h3>Conócenos, envíanos un mensaje</h3><p>Conoce nuestra historia o escríbenos directamente; nuestro equipo de expertos está listo para asesorarte en cada nota y garantizar que tu experiencia de compra sea impecable.</p><a class="btn-r" href="#" data-soon>Contacto</a></div>
+      <div class="c"><span class="hic v-p"><svg class="i"><use href="#i-box"/></svg></span><h3>Centro de ayuda</h3><p>Encuentra respuestas inmediatas sobre procesos de pago, tiempos de envío y garantías. Hemos documentado los flujos más comunes para que nada detenga tu ritmo creativo.</p><a class="btn-r" href="#" data-soon>Preguntas Frecuentes</a></div>
+      <div class="c"><span class="hic v-p"><svg class="i"><use href="#i-wa"/></svg></span><h3>Conócenos, envíanos un mensaje</h3><p>Conoce nuestra historia o escríbenos directamente; nuestro equipo de expertos está listo para asesorarte en cada nota y garantizar que tu experiencia de compra sea impecable.</p><a class="btn-r" href="#" data-soon>Contacto</a></div>
     </div>
   </section>
 </main>
@@ -201,6 +230,11 @@
 <!-- ============ FICHA DE PRODUCTO ============ -->
 <main id="view-pdp" class="view">
   <div class="wrap pd" id="pdp"></div>
+</main>
+
+<!-- ============ SUCURSALES ============ -->
+<main id="view-store" class="view">
+  <div id="storeBody"></div>
 </main>
 
 <!-- ============ PIE (compartido) ============ -->
@@ -250,8 +284,8 @@
 <aside class="panel" id="panel" aria-label="Cambios de la propuesta" aria-hidden="true">
   <header>
     <button class="x" id="panelX" aria-label="Cerrar">×</button>
-    <h2>6 cambios pequeños</h2>
-    <p>Todo lo demás se queda igual que hoy. Toca un cambio para ver qué cambia y por qué.</p>
+    <h2 id="panelTitle">Cambios de la propuesta</h2>
+    <p>La estructura del sitio se mantiene. Toca un cambio para ver qué cambia y por qué.</p>
   </header>
   <div class="list" id="panelList"></div>
   <footer>
@@ -263,8 +297,8 @@
 <!-- bienvenida -->
 <div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="wTitle">
   <div class="card">
-    <h2 id="wTitle">Esto es capitalmusical.com.mx con 6 mejoras pequeñas</h2>
-    <p class="sub">Es el sitio actual, tal cual, con cambios solo en lo que ya existe. Sin filtros ni secciones nuevas.</p>
+    <h2 id="wTitle">Esto es capitalmusical.com.mx, rediseñado sin perder su estructura</h2>
+    <p class="sub">Mismas secciones y mismo orden que hoy. Cambia el diseño de cada bloque para que se vea mejor, se entienda más rápido y convierta más. Sin filtros nuevos.</p>
     <ol>
       <li>Arriba cambia entre <b>Actual</b> y <b>Propuesta</b>.</li>
       <li>Toca los <b>números</b> sobre la página para ver qué cambia y por qué.</li>
