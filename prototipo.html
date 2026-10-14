@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capital Musical – Prototipo de rediseño</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preload" href="assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Barlow';font-weight:400;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:500;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:600;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:700;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:600;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-condensed-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-condensed-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:800;font-style:normal;font-display:swap;src:url(assets/fonts/barlow-condensed-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Caveat';font-weight:600;font-style:normal;font-display:swap;src:url(assets/fonts/caveat-latin-600-normal.woff2) format('woff2')}
+:root{
+  --black:#131313; --ink:#151515; --red:#d73204; --red-d:#b32a03; --cyan:#5fc2d5;
+  --cyan-bg:#e3f5f9; --teal:#0d4651; --green:#1e8e3e; --gray:#f3f2f0; --line:#e3e3e3; --muted:#555;
+  --disp:'Barlow Condensed',Impact,sans-serif; --body:'Barlow',system-ui,sans-serif; --script:'Caveat',cursive;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+section[id]{scroll-margin-top:124px}
+body{margin:0;font-family:var(--body);color:var(--ink);background:#fff;line-height:1.4}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+h1,h2,h3{font-family:var(--disp);text-transform:uppercase;margin:0;line-height:.95}
+h2{font-weight:800;font-size:clamp(30px,4vw,44px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;font-weight:700;font-size:16px;height:48px;padding:0 28px;transition:background .15s,transform .05s}
+.btn:active{transform:scale(.98)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-d)}
+.btn-ghost{background:transparent;color:#fff;border:2px solid #fff}.btn-ghost:hover{background:#fff;color:var(--ink)}
+.btn-outline{background:#fff;color:var(--ink);border:2px solid var(--ink)}.btn-outline:hover{background:var(--ink);color:#fff}
+.btn-wa{background:var(--green);color:#fff}.btn-wa:hover{background:#17722f}
+.btn-sm{height:42px;padding:0 18px;font-size:14px}
+
+/* Barra superior */
+.topbar{background:#252525;color:#fff;font-size:13px;height:36px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 12px}
+.topbar span{transition:opacity .3s}
+
+/* Encabezado */
+header.site{background:var(--black);color:#fff;position:sticky;top:0;z-index:30}
+.hrow{display:flex;align-items:center;gap:20px;height:72px}
+.logo{display:flex;flex-direction:column;line-height:.9;flex:0 0 auto}
+.logo b{font-family:var(--disp);font-weight:800;font-size:30px;letter-spacing:.06em}
+.logo i{font-family:var(--script);font-style:normal;font-weight:600;font-size:23px;color:var(--cyan);margin:-5px 0 0 28px}
+.search{flex:1;position:relative;min-width:0}
+.search form{display:flex;align-items:center;gap:10px;background:#2a2a2a;border-radius:999px;height:46px;padding:0 16px}
+.search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font-size:16px;font-family:inherit}
+.search input::placeholder{color:#a9a9a9}
+.sugg{position:absolute;left:0;right:0;top:52px;background:#fff;color:var(--ink);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.28);overflow:hidden;display:none;z-index:40}
+.sugg.open{display:block}
+.sugg button{display:flex;width:100%;justify-content:space-between;gap:12px;align-items:center;padding:12px 16px;border:0;background:#fff;text-align:left;font-size:15px;border-bottom:1px solid var(--line)}
+.sugg button:hover,.sugg button[aria-selected=true]{background:var(--cyan-bg)}
+.sugg small{color:var(--muted)}
+.iconbtn{position:relative;background:transparent;border:0;color:#fff;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px}
+.iconbtn:hover{background:#2a2a2a}
+.count{position:absolute;top:2px;right:0;background:var(--red);color:#fff;font-size:11px;font-weight:700;border-radius:999px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+nav.main{display:flex;gap:26px;align-items:center;height:46px;font-size:15px;font-weight:600;overflow-x:auto;white-space:nowrap}
+nav.main a{color:#fff;opacity:.92}nav.main a:hover{color:var(--cyan)}
+nav.main .grow{flex:1}
+nav.main .wa{background:var(--green);border-radius:999px;padding:7px 16px;font-size:14px;opacity:1}
+@media(max-width:700px){.hrow{height:60px;gap:8px}.logo b{font-size:24px}.logo i{font-size:19px;margin-left:22px}nav.main{gap:18px}nav.main .grow{display:none}}
+
+/* Héroe */
+.hero{background:var(--black);color:#fff;padding:40px 0 96px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+.hero h1{font-weight:800;font-size:clamp(54px,9vw,104px);margin:14px 0 18px}
+.hero p{font-size:19px;color:#d6d6d6;max-width:480px;margin:0 0 26px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{border-radius:18px;padding:20px;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid #3a3a3a;position:relative;overflow:hidden;text-align:left;color:#fff;background:#232323;transition:transform .15s,border-color .15s}
+.tile:hover{transform:translateY(-3px);border-color:var(--cyan)}
+.tile::before{content:attr(data-g);position:absolute;right:-6px;top:-18px;font-family:var(--disp);font-weight:800;font-size:110px;color:rgba(255,255,255,.06)}
+.tile b{font-family:var(--disp);font-size:28px;text-transform:uppercase;font-weight:700}
+.tile span{font-size:13px;color:var(--cyan);font-weight:600}
+@media(max-width:820px){.hero .wrap{grid-template-columns:1fr}.hero{padding:28px 0 90px}.tile{min-height:104px;padding:14px}.tile b{font-size:22px}}
+
+/* Buscador guiado */
+.finder{margin-top:-56px;position:relative;z-index:5}
+.finder form{background:#fff;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:22px 26px;display:grid;grid-template-columns:200px repeat(3,1fr) auto;gap:16px;align-items:end}
+.finder h2{font-size:28px;padding-bottom:6px}
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#444}
+.field select,.field input{height:48px;border:1.5px solid #bdbdbd;border-radius:10px;padding:0 12px;font-size:16px;background:#fff;font-family:inherit;color:var(--ink)}
+@media(max-width:900px){.finder form{grid-template-columns:1fr;padding:20px}.finder h2{padding:0}}
+
+/* Confianza */
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:44px 0 8px}
+.trust div{display:flex;gap:14px;align-items:flex-start}
+.mark{flex:0 0 44px;height:44px;border-radius:12px;background:var(--cyan-bg);color:#14606e;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.trust b{display:block;font-size:16px}.trust span{font-size:14px;color:var(--muted)}
+@media(max-width:820px){.trust{grid-template-columns:repeat(2,1fr)}}
+
+/* Catálogo */
+section.block{padding:52px 0 8px}
+.cat-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.seg{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.pill{border:2px solid #bdbdbd;background:#fff;color:var(--ink);border-radius:999px;padding:8px 16px;font-weight:700;font-size:14px}
+.pill[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.filters .field{flex-direction:row;align-items:center;gap:8px}
+.filters select{height:42px;font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.status{font-size:14px;color:var(--muted);margin:0 0 14px;min-height:20px}
+.status b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+@media(max-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+.card{border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:7px;background:#fff;transition:box-shadow .15s}
+.card:hover{box-shadow:0 8px 26px rgba(0,0,0,.1)}
+.card.out{opacity:.78}
+.img{aspect-ratio:1/1;border-radius:10px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:10px;cursor:pointer;border:0;width:100%;text-align:left;color:#fff}
+.img span{font-family:var(--disp);font-weight:800;font-size:44px;line-height:.9;text-transform:uppercase;opacity:.9;word-break:break-word}
+.img em{position:absolute;top:10px;left:10px;font-style:normal;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:3px 8px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase}
+.brand{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#666}
+.name{font-size:15px;font-weight:600;line-height:1.3;min-height:58px;background:none;border:0;padding:0;text-align:left;color:var(--ink)}
+.name:hover{color:var(--red)}
+.stars{font-size:13px;color:#b0620a}.stars small{color:#666}
+.price{font-size:22px;font-weight:700}
+.month{font-size:13px;font-weight:700;color:#14606e}
+.stock{font-size:12.5px;font-weight:700;color:#a32b12}
+.card .btn{margin-top:auto;width:100%;height:44px;font-size:14px;padding:0 10px}
+.note{font-size:12px;color:#666;margin:12px 0 0}
+.empty{padding:36px;border:2px dashed #bdbdbd;border-radius:16px;text-align:center;display:none}
+
+/* Paquete */
+.pack{background:var(--black);color:#fff;border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.pack h2{font-size:clamp(34px,5vw,54px);margin:10px 0 12px}
+.pack p{color:#d0d0d0;font-size:17px;margin:0 0 16px}
+.pack ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.pack li{display:flex;justify-content:space-between;gap:12px;background:#232323;border:1px solid #3a3a3a;border-radius:12px;padding:12px 14px;font-size:15px}
+.pack .tot{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 16px}
+.pack .tot b{font-size:34px}.pack .tot span{color:var(--cyan);font-weight:700}
+@media(max-width:820px){.pack{grid-template-columns:1fr;padding:24px}}
+
+/* Pagos */
+.pays{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.pay{background:var(--cyan-bg);border-radius:16px;padding:24px}
+.pay h3{font-weight:800;font-size:34px;color:var(--teal)}
+.pay b{display:block;margin:6px 0 4px}.pay span{font-size:14px;color:#2c4f57}
+@media(max-width:820px){.pays{grid-template-columns:1fr}}
+
+/* Asesor */
+.advisor{border:2px solid var(--ink);border-radius:24px;padding:32px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.avatar{width:104px;height:104px;border-radius:999px;background:var(--gray);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:800;font-size:40px;color:#888}
+.advisor h2{font-size:clamp(30px,4vw,42px);margin-bottom:8px}
+.advisor form{display:grid;grid-template-columns:1fr 2fr auto;gap:12px;align-items:end;margin-top:16px}
+@media(max-width:820px){.advisor{grid-template-columns:1fr}.advisor form{grid-template-columns:1fr}}
+
+/* Contenido y tiendas */
+.articles{background:var(--gray);padding:52px 0;margin-top:52px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.art{background:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.art small{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#14606e}
+.art a{font-size:20px;font-weight:700;line-height:1.25}.art a:hover{color:var(--red)}
+.art span{font-size:14px;color:var(--muted)}
+.store{border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.store b{font-size:20px}.store span{font-size:14px;color:var(--muted)}
+@media(max-width:820px){.cols3{grid-template-columns:1fr}}
+
+/* Pie */
+footer.site{background:var(--black);color:#d6d6d6;padding:48px 0 110px;margin-top:52px}
+footer.site .wrap{display:grid;grid-template-columns:1.2fr 1fr 1.4fr;gap:32px}
+footer.site b{color:#fff;display:block;margin-bottom:10px}
+footer.site a{display:block;margin:6px 0;color:#d6d6d6}footer.site a:hover{color:var(--cyan)}
+footer.site form{display:flex;gap:8px}
+footer.site .wrap>*,footer.site form>div{min-width:0}
+footer.site input{flex:1;min-width:0;height:46px;border-radius:999px;border:0;padding:0 16px;font-size:16px;font-family:inherit}
+@media(max-width:820px){footer.site .wrap{grid-template-columns:1fr}}
+
+/* Botón flotante único */
+.wafab{position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:999px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:25}
+
+/* Modal de producto */
+dialog{border:0;border-radius:20px;padding:0;width:min(880px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+.pdp{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pdp .gal{padding:20px;display:flex;flex-direction:column;gap:10px}
+.pdp .gal .img{cursor:default;font-size:1px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.thumbs div{aspect-ratio:1/1;border-radius:8px;border:2px solid var(--line)}
+.thumbs div:first-child{border-color:var(--ink)}
+.pdp .info{padding:24px 22px;display:flex;flex-direction:column;gap:10px}
+.pdp h2{font-size:32px}
+.close{position:absolute;right:10px;top:10px;width:44px;height:44px;border-radius:999px;border:0;background:#fff;font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:2}
+.msi{background:var(--cyan-bg);border-radius:12px;padding:12px 14px}
+.msi b{display:block;color:var(--teal);font-size:18px}.msi span{font-size:13px;color:#2c4f57}
+.facts{font-size:14px;color:#333;border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.specs div{background:var(--gray);border-radius:10px;padding:8px 10px;font-size:13px}
+.specs small{display:block;color:#666;text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.qrow{display:flex;gap:10px;align-items:center}
+@media(max-width:720px){.pdp{grid-template-columns:1fr}}
+
+/* Carrito */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.scrim.open{opacity:1;pointer-events:auto}
+aside.drawer{position:fixed;top:0;right:0;height:100%;width:min(420px,100vw);background:#fff;z-index:60;transform:translateX(100%);visibility:hidden;transition:transform .25s,visibility 0s .25s;display:flex;flex-direction:column}
+aside.drawer.open{transform:none;visibility:visible;transition-delay:0s;box-shadow:-10px 0 40px rgba(0,0,0,.25)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dh h2{font-size:28px}
+.ship{background:var(--cyan-bg);padding:12px 18px;font-size:14px;color:var(--teal);font-weight:600}
+.bar{height:8px;border-radius:99px;background:#fff;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .3s}
+.items{flex:1;overflow:auto;padding:6px 18px}
+.line{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+.line .th{width:64px;height:64px;border-radius:10px;color:#fff;display:flex;align-items:flex-end;padding:5px;font-family:var(--disp);font-weight:800;font-size:15px;text-transform:uppercase;line-height:.9;overflow:hidden}
+.line p{margin:0 0 4px;font-size:14px;font-weight:600}
+.qty{display:inline-flex;align-items:center;border:1.5px solid #bdbdbd;border-radius:999px}
+.qty button{width:34px;height:34px;border:0;background:transparent;font-size:18px;border-radius:999px}
+.qty span{min-width:22px;text-align:center;font-weight:700;font-size:14px}
+.rm{background:none;border:0;color:#666;text-decoration:underline;font-size:12px;margin-left:8px}
+.cross{padding:12px 0}
+.cross h3{font-size:20px;margin-bottom:8px}
+.cross .row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px;font-size:13px}
+.df{padding:16px 18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.tr{display:flex;justify-content:space-between;font-size:16px;font-weight:700}
+.df small{color:#2c4f57;font-size:13px}
+.df .trust-line{font-size:12px;color:var(--muted);text-align:center}
+.cempty{padding:40px 0;text-align:center;color:var(--muted)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:80;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.proto{background:var(--cyan-bg);color:var(--teal);font-size:13px;text-align:center;padding:8px 12px}
+
+/* ---- Capa "por qué" ---- */
+.whytoggle{position:fixed;left:14px;bottom:14px;z-index:70;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;height:44px;padding:0 16px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.whytoggle[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.whypin{position:absolute;z-index:45;width:30px;height:30px;border-radius:999px;border:3px solid #fff;background:var(--red);color:#fff;font-weight:800;font-size:14px;display:none;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.4);padding:0;cursor:pointer;font-family:inherit;line-height:1}
+.why-on .whypin{display:flex}
+.whypin:hover,.whypin.on{background:var(--teal);transform:scale(1.12)}
+.why-host{position:relative}
+#whyPanel{position:fixed;right:16px;bottom:70px;z-index:95;width:min(380px,calc(100vw - 32px));max-height:min(70vh,560px);overflow:auto;background:#fff;color:var(--ink);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.4);border:2px solid var(--ink);display:none;font-size:14px}
+#whyPanel.open{display:block}
+#whyPanel header{display:flex;gap:10px;align-items:flex-start;padding:14px 16px 8px}
+#whyPanel header b.n{flex:0 0 30px;height:30px;border-radius:99px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
+#whyPanel h3{font-size:22px;line-height:1;margin:2px 0 3px}
+#whyPanel small{color:#14606e;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+#whyPanel .x{margin-left:auto;border:0;background:none;font-size:20px;width:36px;height:36px;border-radius:99px}
+#whyPanel section{padding:6px 16px 10px}
+#whyPanel section b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#666;margin-bottom:2px}
+#whyPanel section p{margin:0}
+#whyPanel section.ok{background:var(--cyan-bg);border-radius:0 0 14px 14px;padding-top:10px;padding-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="proto">Prototipo de ejemplo del rediseño. Productos y precios del sitio; las reseñas y las mensualidades son ilustrativas. Nada se envía ni se compra.</div>
+<div class="topbar" role="status"><span id="tbmsg"></span></div>
+
+<header class="site">
+  <div class="wrap">
+    <div class="hrow">
+      <a class="logo" href="#top" aria-label="Capital Musical, inicio"><b>CAPITAL</b><i>Musical</i></a>
+      <div class="search" role="search">
+        <form id="sform" autocomplete="off">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+          <label class="sr" for="q">Buscar</label>
+          <input id="q" type="search" placeholder="Marca, modelo o instrumento" aria-controls="sugg" aria-expanded="false">
+        </form>
+        <div class="sugg" id="sugg" role="listbox" aria-label="Sugerencias"></div>
+      </div>
+      <button class="iconbtn" id="openCart" aria-label="Abrir carrito">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 9h18l-2 11H5L3 9z"/><path d="M8 9l3-5M16 9l-3-5"/></svg>
+        <span class="count" id="cartCount" aria-live="polite">0</span>
+      </button>
+    </div>
+    <nav class="main" aria-label="Principal">
+      <a href="#catalogo" data-cat="all">Productos</a>
+      <a href="#catalogo" data-cat="electricas">Guitarras</a>
+      <a href="#catalogo" data-cat="teclados">Teclados</a>
+      <a href="#catalogo" data-cat="pedales">Pedales</a>
+      <a href="#catalogo" data-level="principiante">Para principiantes</a>
+      <a href="#paquete">Paquete de inicio</a>
+      <span class="grow"></span>
+      <a class="wa" href="#asesor">Asesoría por WhatsApp</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Instrumentos con asesoría real</span>
+        <h1>Toca hoy.<br>Paga a meses.</h1>
+        <p>Guitarras, pianos y equipo de las mejores marcas, con hasta 12 meses sin tarjeta y músicos de tu lado para elegir bien.</p>
+        <div class="cta">
+          <a class="btn btn-red" href="#catalogo">Ver modelos</a>
+          <a class="btn btn-ghost" href="#asesor">Hablar con un asesor</a>
+        </div>
+      </div>
+      <div class="tiles" id="tiles"></div>
+    </div>
+  </section>
+
+  <section class="finder">
+    <div class="wrap">
+      <form id="finder">
+        <h2>Encuentra el tuyo en 10 segundos</h2>
+        <label class="field">Quiero
+          <select id="fInst">
+            <option value="electricas">Guitarra eléctrica</option>
+            <option value="amplis">Amplificador</option>
+            <option value="teclados">Piano digital</option>
+            <option value="pedales">Pedales y efectos</option>
+            <option value="audio">Audio profesional</option>
+          </select>
+        </label>
+        <label class="field">Mi nivel
+          <select id="fLevel">
+            <option value="all">Cualquiera</option>
+            <option value="principiante">Estoy empezando</option>
+            <option value="intermedio">Intermedio</option>
+            <option value="pro">Profesional</option>
+          </select>
+        </label>
+        <label class="field">Presupuesto
+          <select id="fBudget">
+            <option value="all">Cualquiera</option>
+            <option value="b1">Hasta $5,000</option>
+            <option value="b2">$5,000 a $10,000</option>
+            <option value="b3">Más de $10,000</option>
+          </select>
+        </label>
+        <button class="btn btn-red" type="submit">Ver modelos</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="trust">
+      <div><span class="mark" aria-hidden="true">★</span><p style="margin:0"><b>Reseñas de compradores</b><span>Calificación verificada en cada producto</span></p></div>
+      <div><span class="mark" aria-hidden="true">✓</span><p style="margin:0"><b>Garantía oficial</b><span>Cambios y devoluciones claros</span></p></div>
+      <div><span class="mark" aria-hidden="true">→</span><p style="margin:0"><b>Envío gratis desde $2,000</b><span>A todo México</span></p></div>
+      <div><span class="mark" aria-hidden="true">⌂</span><p style="margin:0"><b>3 tiendas físicas</b><span>Acapulco, Cuernavaca y Huatulco</span></p></div>
+    </div>
+  </div>
+
+  <section class="block" id="catalogo">
+    <div class="wrap">
+      <div class="cat-head">
+        <h2>Compra por instrumento</h2>
+        <div class="seg" role="group" aria-label="Plazo de pagos">
+          <span>Ver pagos a</span>
+          <button class="pill" id="plan6" aria-pressed="true">6 meses</button>
+          <button class="pill" id="plan12" aria-pressed="false">12 meses</button>
+        </div>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Categoría"></div>
+      <div class="filters">
+        <label class="field">Nivel
+          <select id="xLevel"><option value="all">Todos</option><option value="principiante">Principiante</option><option value="intermedio">Intermedio</option><option value="pro">Profesional</option></select>
+        </label>
+        <label class="field">Precio
+          <select id="xBudget"><option value="all">Todos</option><option value="b1">Hasta $5,000</option><option value="b2">$5,000 a $10,000</option><option value="b3">Más de $10,000</option></select>
+        </label>
+        <label class="field">Orden
+          <select id="xSort"><option value="rec">Recomendados (instrumentos con existencia primero)</option><option value="asc">Precio: menor a mayor</option><option value="desc">Precio: mayor a menor</option></select>
+        </label>
+        <button class="pill" id="clear">Limpiar filtros</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty">
+        <p style="margin:0 0 12px"><b>No encontramos ese modelo.</b> Cuéntanos qué buscas y un asesor te ayuda.</p>
+        <a class="btn btn-wa btn-sm" id="emptyWa" href="#" target="_blank" rel="noopener">Preguntar por WhatsApp</a>
+      </div>
+      <p class="note">*Mensualidad de ejemplo sin intereses. Los niveles de cada producto son ilustrativos.</p>
+    </div>
+  </section>
+
+  <section class="block" id="paquete">
+    <div class="wrap">
+      <div class="pack">
+        <div>
+          <span class="eyebrow">Paquete de inicio</span>
+          <h2>Tu primera guitarra, lista para tocar</h2>
+          <p>Guitarra, amplificador, cable y afinador en una sola compra. Ejemplo armado con productos reales de la tienda.</p>
+          <div class="tot"><b id="packTotal"></b><span id="packMonth"></span></div>
+          <button class="btn btn-red" id="addPack">Agregar paquete al carrito</button>
+        </div>
+        <ul id="packList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>Paga como te convenga</h2>
+      <div class="pays">
+        <div class="pay"><h3>Hasta 12 meses</h3><b>Sin tarjeta, con Mercado Pago</b><span>Sujeto a aprobación en tu cuenta de Mercado Pago.</span></div>
+        <div class="pay"><h3>6 meses</h3><b>Sin intereses con tarjetas participantes</b><span>Ve tu mensualidad en cada producto antes de pagar.</span></div>
+        <div class="pay"><h3>Otras formas</h3><b>PayPal, Apple Pay, Google Pay y Kueski Pay</b><span>Consulta las condiciones en cada método de pago.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="asesor">
+    <div class="wrap">
+      <div class="advisor">
+        <div class="avatar" aria-hidden="true">♪</div>
+        <div>
+          <h2>Cuéntame qué tocas y te recomiendo</h2>
+          <span style="color:var(--muted)">Nuestro Guitar-Tech te responde por WhatsApp.</span>
+          <form id="advForm">
+            <label class="field">Instrumento
+              <select id="advInst"><option>Guitarra eléctrica</option><option>Guitarra acústica</option><option>Piano o teclado</option><option>Batería</option><option>Audio</option></select>
+            </label>
+            <label class="field">¿Qué necesitas?
+              <input id="advMsg" type="text" placeholder="Ej.: es mi primera guitarra, presupuesto de $6,000">
+            </label>
+            <button class="btn btn-wa" type="submit">Escribir por WhatsApp</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="articles">
+    <div class="wrap">
+      <h2>Aprende con nuestro Guitar-Tech</h2>
+      <div class="cols3">
+        <article class="art"><small>Guía</small><a href="#">¿Cada cuánto debes cambiar las cuerdas de tu guitarra o bajo?</a><span>Ver el producto relacionado →</span></article>
+        <article class="art"><small>Guía</small><a href="#">Cómo cablear tu pedal board</a><span>Ver el producto relacionado →</span></article>
+        <article class="art"><small>Guía</small><a href="#">El problema del "hum" y cómo eliminarlo con el Boss NS-2</a><span>Ver el producto relacionado →</span></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>Visítanos en tienda</h2>
+      <div class="cols3">
+        <div class="store"><b>Acapulco</b><span>Tienda física con atención de asesores.</span></div>
+        <div class="store"><b>Cuernavaca</b><span>Con Servicios Técnicos especializados.</span></div>
+        <div class="store"><b>Huatulco</b><span>Palma Real 405, Sector H, Bahías de Huatulco, Oax. Lunes a viernes de 10:00 a 19:00 y sábados de 10:00 a 15:00.</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="logo" href="#top" style="color:#fff;margin:0"><b style="color:#fff;margin:0">CAPITAL</b><i>Musical</i></a>
+      <p style="margin:14px 0 0;font-size:14px">Los instrumentos y equipos los ponemos nosotros, la creatividad y el talento, los pones TÚ.</p>
+    </div>
+    <div>
+      <b>Ayuda</b>
+      <a href="#">Estatus de tu orden</a><a href="#">Cambios y devoluciones</a><a href="#">Envíos</a><a href="#">Preguntas frecuentes</a>
+    </div>
+    <form id="news">
+      <div style="flex:1">
+        <b>Recibe 5% de descuento en tu primera compra</b>
+        <div style="display:flex;gap:8px"><label class="sr" for="nmail">Correo electrónico</label><input id="nmail" type="email" placeholder="Tu correo electrónico" required><button class="btn btn-red" type="submit" style="height:46px">Quiero mi 5%</button></div>
+      </div>
+    </form>
+  </div>
+</footer>
+
+<a class="wafab" id="wafab" href="#" target="_blank" rel="noopener" aria-label="Asesoría por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z"/><path d="M9.2 9.2c0 3 2.6 5.600 5.600 5.600l1.200-1.400-2-1-.8.8c-1-.4-1.800-1.200-2.200-2.200l.8-.8-1-2-1.600 1z"/></svg>
+</a>
+
+<dialog id="pdp" aria-labelledby="pdpTitle"></dialog>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Carrito">
+  <div class="dh"><h2>Tu carrito</h2><button class="iconbtn" id="closeCart" style="color:var(--ink)" aria-label="Cerrar carrito">✕</button></div>
+  <div class="ship" id="ship"></div>
+  <div class="items" id="items"></div>
+  <div class="df" id="dfoot"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  'use strict';
+  var WA = '527771486806';
+  var FREE = 2000;
+  var $ = function(s,el){return (el||document).querySelector(s);};
+  var fmt = function(n){return '$' + Math.round(n).toLocaleString('es-MX');};
+  var norm = function(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');};
+
+  var CATS = {
+    electricas:{n:'Guitarras eléctricas', g:'linear-gradient(135deg,#2a2a2a,#6b1d0a)', s:'Desde $4,899'},
+    amplis:{n:'Amplificadores', g:'linear-gradient(135deg,#1f2a2e,#0d4651)', s:'Ver modelos'},
+    teclados:{n:'Teclados y pianos', g:'linear-gradient(135deg,#232323,#3b4a6b)', s:'Ver modelos'},
+    pedales:{n:'Pedales y efectos', g:'linear-gradient(135deg,#2b2326,#8a2a14)', s:'Ver modelos'},
+    audio:{n:'Audio profesional', g:'linear-gradient(135deg,#1e2a24,#1e6b4a)', s:'Ver modelos'},
+    accesorios:{n:'Accesorios', g:'linear-gradient(135deg,#2a2a2a,#555)', s:'Ver modelos'}
+  };
+  // Productos y precios reales del sitio (colección y carrito). Nivel = asignación de ejemplo.
+  var P = [
+    {id:1,b:'Fender',n:'Guitarra eléctrica Stratocaster Late ’50s Vintera III Sunburst',p:29540,c:'electricas',l:'pro',st:1,
+      specs:[['Cuerpo','Aliso, acabado brillante'],['Mástil','Arce de una pieza, perfil "D"'],['Escala','25.5" (648 mm), 21 trastes'],['Pastillas','3 single-coil (SSS)'],['Radio','7.25" (184.1 mm)'],['Puente','Fijo']]},
+    {id:2,b:'Fender',n:'Guitarra eléctrica Stratocaster Late ’50s Vintera III Aztec Gold',p:26315,c:'electricas',l:'pro',st:1},
+    {id:3,b:'Fender',n:'Guitarra eléctrica Stratocaster Player II Aged Cherry Burst',p:20999,c:'electricas',l:'intermedio',st:1},
+    {id:4,b:'Jackson',n:'Guitarra eléctrica JS32 Dinky Arch Top negra',p:8649,c:'electricas',l:'intermedio',st:2},
+    {id:5,b:'Jackson',n:'Guitarra eléctrica JS22 Dinky Arch Top negra',p:4899,c:'electricas',l:'principiante'},
+    {id:6,b:'Aureal',n:'Guitarra eléctrica JOM-90 TS Yellow',p:5295,c:'electricas',l:'principiante'},
+    {id:7,b:'Gretsch',n:'Guitarra eléctrica Streamliner G2655 con V-stoptail Olive Steel',p:11999,c:'electricas',l:'intermedio',st:1},
+    {id:8,b:'Gretsch',n:'Guitarra eléctrica G2622 Center Block Double-cut Gunmetal',p:11999,c:'electricas',l:'intermedio',st:2},
+    {id:9,b:'Fender',n:'Amplificador Mustang LTX50 120V, USB',p:8599,c:'amplis',l:'principiante',st:2},
+    {id:10,b:'Fender',n:'Amplificador Mustang LTX100 120V, USB',p:10999,c:'amplis',l:'intermedio',st:1},
+    {id:11,b:'Roland',n:'Piano digital de 88 teclas FP-40-WH',p:20999,c:'teclados',l:'intermedio'},
+    {id:12,b:'BOSS',n:'Pedal SD-1',p:1305,c:'pedales',l:'principiante'},
+    {id:13,b:'BOSS',n:'Loop Station RC-500',p:6925,c:'pedales',l:'pro'},
+    {id:14,b:'BOSS',n:'Pedal AW-3 Dynamic Wah',p:3820,c:'pedales',l:'intermedio'},
+    {id:15,b:'BOSS',n:'Pedal Slicer SL-2',p:4640,c:'pedales',l:'pro',out:true},
+    {id:16,b:'Fender',n:'Compresor Bends V2',p:4365,c:'pedales',l:'intermedio',st:1},
+    {id:17,b:'Melo',n:'Bafle activo XM12B DSP 12" 800W RMS Bluetooth',p:8299,c:'audio',l:'intermedio',st:2},
+    {id:18,b:'Melo',n:'Kit de 7 micrófonos para batería MD-7 negro',p:5599,c:'audio',l:'intermedio',st:1},
+    {id:19,b:'Yamaha',n:'Afinador digital YTC5 con clip negro',p:499,c:'accesorios',l:'principiante'},
+    {id:20,b:'Fender',n:'Cable de parcheo 15 cm Deluxe Tweed negro',p:340,c:'accesorios',l:'principiante'}
+  ];
+  var byId = {}; P.forEach(function(p){byId[p.id]=p;});
+  var LV = {principiante:'Principiante',intermedio:'Intermedio',pro:'Profesional'};
+  var PACK = [5,9,20,19];
+
+  var S = {cat:'all',level:'all',budget:'all',sort:'rec',q:'',plan:6,cart:{}};
+
+  function bud(p,b){return b==='all'|| (b==='b1'&&p<=5000) || (b==='b2'&&p>5000&&p<=10000) || (b==='b3'&&p>10000);}
+  function month(p){return S.plan+' pagos de '+fmt(p/S.plan)+'*';}
+  function tile(p,cls){var g=CATS[p.c].g;return '<div class="'+(cls||'img')+'" style="background:'+g+'"><span>'+p.b+'</span></div>';}
+
+  /* Barra superior rotativa */
+  var msgs=['<b>12 meses sin tarjeta</b> con Mercado Pago','Envío gratis desde $2,000','Garantía oficial de marca'];
+  var mi=0, tb=$('#tbmsg'); tb.innerHTML=msgs[0];
+  setInterval(function(){tb.style.opacity=0;setTimeout(function(){mi=(mi+1)%msgs.length;tb.innerHTML=msgs[mi];tb.style.opacity=1;},300);},3800);
+
+  /* Entradas del héroe y chips */
+  var tiles=[['electricas','Guitarras','G'],['teclados','Teclados','T'],['pedales','Pedales','P'],['audio','Audio','A']];
+  $('#tiles').innerHTML=tiles.map(function(t){return '<button class="tile" data-cat="'+t[0]+'" data-g="'+t[2]+'"><b>'+t[1]+'</b><span>Ver todo →</span></button>';}).join('');
+  function renderChips(){
+    var keys=['all'].concat(Object.keys(CATS));
+    $('#chips').innerHTML=keys.map(function(k){return '<button class="pill" data-cat="'+k+'" aria-pressed="'+(S.cat===k)+'">'+(k==='all'?'Todo':CATS[k].n)+'</button>';}).join('');
+  }
+
+  /* Catálogo */
+  function filtered(){
+    var q=norm(S.q.trim());
+    var list=P.filter(function(p){
+      if(S.cat!=='all'&&p.c!==S.cat)return false;
+      if(S.level!=='all'&&p.l!==S.level)return false;
+      if(!bud(p.p,S.budget))return false;
+      if(q&&norm(p.b+' '+p.n+' '+CATS[p.c].n).indexOf(q)<0)return false;
+      return true;
+    });
+    list.sort(function(a,b){
+      if(S.sort==='asc')return a.p-b.p;
+      if(S.sort==='desc')return b.p-a.p;
+      var CO={electricas:0,amplis:1,teclados:2,pedales:3,audio:4,accesorios:5};
+      function rk(x){return (x.out?10:0)+CO[x.c];}
+      return rk(a)-rk(b) || a.p-b.p;
+    });
+    return list;
+  }
+  function cardHTML(p){
+    var stock=p.out?'<span class="stock">Agotado por ahora</span>':(p.st&&p.st<=2?'<span class="stock">Queda'+(p.st>1?'n ':' ')+p.st+(p.st>1?' unidades':' unidad')+'</span>':'');
+    var btn=p.out?'<button class="btn btn-outline" data-act="notify" data-id="'+p.id+'">Avísame cuando llegue</button>':'<button class="btn btn-red" data-act="add" data-id="'+p.id+'">Añadir al carrito</button>';
+    return '<article class="card'+(p.out?' out':'')+'">'+
+      '<button class="img" style="background:'+CATS[p.c].g+'" data-act="view" data-id="'+p.id+'" aria-label="Ver '+p.n.replace(/"/g,'')+'"><em>'+LV[p.l]+'</em><span>'+p.b+'</span></button>'+
+      '<span class="brand">'+p.b+'</span>'+
+      '<button class="name" data-act="view" data-id="'+p.id+'">'+p.n+'</button>'+
+      '<span class="stars">★★★★★ <small>Reseñas</small></span>'+
+      '<span class="price">'+fmt(p.p)+'</span><span class="month">'+month(p.p)+'</span>'+stock+btn+'</article>';
+  }
+  var notice='';
+  function renderGrid(){
+    var l=filtered();
+    $('#grid').innerHTML=l.map(cardHTML).join('');
+    $('#empty').style.display=l.length?'none':'block';
+    var q=S.q.trim();
+    $('#emptyWa').href=waLink('Hola, busco '+(q||'un instrumento')+' y no lo encontré en la tienda. ¿Me ayudan?');
+    var inStock=l.filter(function(p){return !p.out;}).length;
+    $('#status').innerHTML=(notice?'<b>'+notice+'</b> ':'')+l.length+' producto'+(l.length===1?'':'s')+(q?' para "'+q.replace(/</g,'')+'"':'')+(S.sort==='rec'&&l.length?'. Los agotados van al final.':'.');
+    $('#xLevel').value=S.level;$('#xBudget').value=S.budget;$('#xSort').value=S.sort;
+    renderChips();
+    $('#plan6').setAttribute('aria-pressed',S.plan===6);$('#plan12').setAttribute('aria-pressed',S.plan===12);
+    renderPack();
+  }
+  function goCatalog(){document.getElementById('catalogo').scrollIntoView({behavior:'smooth'});}
+
+  /* Buscador guiado con relajación de filtros */
+  $('#finder').addEventListener('submit',function(e){
+    e.preventDefault();
+    var c=$('#fInst').value,l=$('#fLevel').value,b=$('#fBudget').value;
+    S.q='';S.sort='rec';notice='';
+    function count(c,l,b){return P.filter(function(p){return p.c===c&&(l==='all'||p.l===l)&&bud(p.p,b);}).length;}
+    if(count(c,l,b)===0){
+      if(count(c,l,'all')>0){b='all';notice='No hay exactos en ese presupuesto; mostramos todo el nivel elegido.';}
+      else {l='all';b='all';notice='No hay exactos para ese nivel; mostramos toda la categoría.';}
+    }
+    S.cat=c;S.level=l;S.budget=b;renderGrid();goCatalog();
+  });
+  /* Navegación y atajos */
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-cat],[data-level]');
+    if(t&&(t.matches('.tile')||t.closest('nav.main'))){
+      if(t.dataset.cat){S.cat=t.dataset.cat;}
+      if(t.dataset.level){S.level=t.dataset.level;S.cat='all';} else {S.level='all';}
+      S.budget='all';S.q='';notice='';renderGrid();
+      if(t.matches('.tile')){e.preventDefault();goCatalog();}
+      return;
+    }
+    var chip=e.target.closest('#chips [data-cat]');
+    if(chip){S.cat=chip.dataset.cat;notice='';renderGrid();return;}
+    var a=e.target.closest('[data-act]');
+    if(!a)return;
+    var id=+a.dataset.id, act=a.dataset.act;
+    if(act==='add')addToCart(id,1,true);
+    if(act==='view')openPdp(id);
+    if(act==='notify')openPdp(id);
+  });
+  $('#xLevel').onchange=function(){S.level=this.value;notice='';renderGrid();};
+  $('#xBudget').onchange=function(){S.budget=this.value;notice='';renderGrid();};
+  $('#xSort').onchange=function(){S.sort=this.value;renderGrid();};
+  $('#clear').onclick=function(){S.cat='all';S.level='all';S.budget='all';S.q='';S.sort='rec';notice='';$('#q').value='';renderGrid();};
+  $('#plan6').onclick=function(){S.plan=6;renderGrid();refreshCart();};
+  $('#plan12').onclick=function(){S.plan=12;renderGrid();refreshCart();};
+
+  /* Búsqueda predictiva */
+  var sugg=$('#sugg'),qi=$('#q'),active=-1,cur=[];
+  function closeS(){sugg.classList.remove('open');qi.setAttribute('aria-expanded','false');active=-1;}
+  qi.addEventListener('input',function(){
+    var q=norm(qi.value.trim());
+    if(q.length<2){closeS();return;}
+    var items=[];
+    Object.keys(CATS).forEach(function(k){if(norm(CATS[k].n).indexOf(q)>=0)items.push({t:'cat',k:k,label:CATS[k].n,hint:'Categoría'});});
+    var brands={};P.forEach(function(p){if(norm(p.b).indexOf(q)>=0&&!brands[p.b]){brands[p.b]=1;items.push({t:'brand',k:p.b,label:p.b,hint:'Marca'});}});
+    P.forEach(function(p){if(norm(p.b+' '+p.n).indexOf(q)>=0&&items.length<7)items.push({t:'p',k:p.id,label:p.b+' '+p.n.replace(/^(Guitarra eléctrica|Amplificador|Piano digital de 88 teclas|Pedal)\s*/,''),hint:fmt(p.p)});});
+    cur=items.slice(0,6);
+    sugg.innerHTML=cur.length?cur.map(function(i,ix){return '<button role="option" data-ix="'+ix+'" aria-selected="false"><span>'+i.label+'</span><small>'+i.hint+'</small></button>';}).join(''):'<button disabled style="color:#666">Sin coincidencias. Prueba con otra marca o modelo.</button>';
+    sugg.classList.add('open');qi.setAttribute('aria-expanded','true');active=-1;
+  });
+  function pick(i){
+    closeS();
+    if(i.t==='p'){openPdp(i.k);return;}
+    S.q='';S.level='all';S.budget='all';notice='';
+    if(i.t==='cat'){S.cat=i.k;}else{S.cat='all';S.q=i.k;qi.value=i.k;}
+    renderGrid();goCatalog();
+  }
+  sugg.addEventListener('click',function(e){var b=e.target.closest('[data-ix]');if(b)pick(cur[+b.dataset.ix]);});
+  qi.addEventListener('keydown',function(e){
+    var opts=sugg.querySelectorAll('[data-ix]');
+    if(e.key==='ArrowDown'&&opts.length){e.preventDefault();active=(active+1)%opts.length;}
+    else if(e.key==='ArrowUp'&&opts.length){e.preventDefault();active=(active-1+opts.length)%opts.length;}
+    else if(e.key==='Escape'){closeS();return;}
+    else return;
+    opts.forEach(function(o,ix){o.setAttribute('aria-selected',ix===active);});
+  });
+  $('#sform').addEventListener('submit',function(e){
+    e.preventDefault();
+    if(active>=0&&cur[active]){pick(cur[active]);return;}
+    S.q=qi.value;S.cat='all';S.level='all';S.budget='all';notice='';closeS();renderGrid();goCatalog();
+  });
+  document.addEventListener('click',function(e){if(!e.target.closest('.search'))closeS();});
+
+  /* Ficha rápida */
+  var dlg=$('#pdp');
+  function waLink(msg){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg);}
+  function openPdp(id){
+    var p=byId[id];
+    var stock=p.out?'<b class="stock">Agotado por ahora</b>':(p.st&&p.st<=2?'<b class="stock">Queda'+(p.st>1?'n ':' ')+p.st+(p.st>1?' unidades':' unidad')+'</b>':'<b style="color:#1e6f33">Disponible</b>');
+    var ship=p.p>=FREE?'<b>Envío gratis</b> a todo México.':'Envío gratis desde $2,000 (te faltan '+fmt(FREE-p.p)+').';
+    var specs=p.specs?'<div class="specs">'+p.specs.map(function(s){return '<div><small>'+s[0]+'</small>'+s[1]+'</div>';}).join('')+'</div>':'';
+    var buy=p.out?
+      '<form id="notifyForm" style="display:flex;flex-direction:column;gap:8px"><label class="field">Tu correo<input type="email" required placeholder="correo@ejemplo.com"></label><button class="btn btn-red" type="submit">Avísame cuando llegue</button></form>':
+      '<div class="qrow"><div class="qty" id="pq"><button type="button" data-d="-1" aria-label="Menos">−</button><span id="pqv">1</span><button type="button" data-d="1" aria-label="Más">+</button></div><button class="btn btn-red" id="pAdd" style="flex:1">Añadir al carrito</button></div>';
+    dlg.innerHTML='<button class="close" id="pClose" aria-label="Cerrar">✕</button><div class="pdp"><div class="gal">'+tile(p,'img')+'<div class="thumbs"><div></div><div></div><div></div><div></div></div></div>'+
+      '<div class="info"><span class="brand">'+p.b+' · '+LV[p.l]+'</span><h2 id="pdpTitle">'+p.n+'</h2>'+
+      '<span class="stars">★★★★★ <small>Reseñas de compradores</small></span>'+
+      '<span class="price" style="font-size:34px">'+fmt(p.p)+' <small style="font-size:13px;font-weight:500;color:#555">IVA incluido</small></span>'+
+      '<div class="msi"><b>'+month(p.p)+'</b><span>o hasta 12 meses sin tarjeta con Mercado Pago</span></div>'+
+      stock+buy+
+      '<a class="btn btn-wa" target="_blank" rel="noopener" href="'+waLink('Hola, me interesa: '+p.b+' '+p.n+' ('+fmt(p.p)+'). ¿Me pueden asesorar?')+'">Preguntar a un asesor por este modelo</a>'+
+      '<div class="facts"><span>'+ship+'</span><span><b>Garantía oficial</b> de marca.</span><span><b>Cambios y devoluciones</b> con política clara.</span></div>'+specs+'</div></div>';
+    dlg.showModal();
+    var q=1,pv=$('#pqv',dlg);
+    var max=p.st||99;
+    if($('#pq',dlg))$('#pq',dlg).addEventListener('click',function(e){var d=e.target.closest('[data-d]');if(!d)return;q=Math.max(1,Math.min(max,q+(+d.dataset.d)));pv.textContent=q;if(q===max&&p.st)toast('Solo '+(p.st>1?'quedan '+p.st+' unidades':'queda 1 unidad'));});
+    if($('#pAdd',dlg))$('#pAdd',dlg).onclick=function(){addToCart(id,q,true);dlg.close();};
+    if($('#notifyForm',dlg))$('#notifyForm',dlg).onsubmit=function(e){e.preventDefault();toast('Listo: te avisamos cuando llegue.');dlg.close();};
+    $('#pClose',dlg).onclick=function(){dlg.close();};
+  }
+  dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close();});
+
+  /* Carrito */
+  var drawer=$('#drawer'),scrim=$('#scrim');
+  function qtyOf(id){return S.cart[id]||0;}
+  function addToCart(id,n,open){
+    var p=byId[id],cur=qtyOf(id),max=p.st||99;
+    if(cur+n>max){toast('Solo '+(max>1?'quedan '+max+' unidades':'queda 1 unidad')+' de este modelo');n=max-cur;if(n<=0)return;}
+    S.cart[id]=cur+n;refreshCart();
+    if(open)openCart();
+  }
+  function totals(){var t=0,c=0;Object.keys(S.cart).forEach(function(k){t+=byId[k].p*S.cart[k];c+=S.cart[k];});return {t:t,c:c};}
+  function refreshCart(){
+    var T=totals();
+    $('#cartCount').textContent=T.c;
+    var pct=Math.min(100,T.t/FREE*100);
+    $('#ship').innerHTML=T.t===0?'Envío gratis desde $2,000':(T.t>=FREE?'Tienes envío gratis.':'Agrega <b>'+fmt(FREE-T.t)+'</b> para obtener envío gratis')+'<div class="bar"><i style="width:'+pct+'%"></i></div>';
+    var keys=Object.keys(S.cart);
+    $('#items').innerHTML=keys.length?keys.map(function(k){var p=byId[k];return '<div class="line"><div class="th" style="background:'+CATS[p.c].g+'">'+p.b+'</div><div><p>'+p.n+'</p><div class="qty"><button data-q="-1" data-id="'+k+'" aria-label="Menos">−</button><span>'+S.cart[k]+'</span><button data-q="1" data-id="'+k+'" aria-label="Más">+</button></div><button class="rm" data-rm="'+k+'">Quitar</button></div><b>'+fmt(p.p*S.cart[k])+'</b></div>';}).join('')+crossHTML():'<div class="cempty">Tu carrito está vacío.<br><br><a class="btn btn-red btn-sm" href="#catalogo" id="goShop">Ver modelos</a></div>';
+    $('#dfoot').innerHTML=keys.length?'<div class="tr"><span>Total</span><span>'+fmt(T.t)+'</span></div><small>IVA incluido. '+S.plan+' pagos de '+fmt(T.t/S.plan)+'* con MSI o Mercado Pago.</small><button class="btn btn-red" id="pay" style="height:52px">Pagar '+fmt(T.t)+'</button><span class="trust-line">Pago seguro · Garantía oficial · Cambios y devoluciones</span>':'';
+  }
+  function crossHTML(){
+    var ids=[19,20].filter(function(i){return !qtyOf(i);});
+    if(!ids.length)return '';
+    return '<div class="cross"><h3>Completa tu compra</h3>'+ids.map(function(i){var p=byId[i];return '<div class="row"><span>'+p.n+'<br><b>'+fmt(p.p)+'</b></span><button class="btn btn-outline btn-sm" data-xs="'+i+'">Añadir</button></div>';}).join('')+'</div>';
+  }
+  drawer.addEventListener('click',function(e){
+    var q=e.target.closest('[data-q]');
+    if(q){var id=+q.dataset.id,d=+q.dataset.q;if(d>0){addToCart(id,1,false);}else{S.cart[id]=qtyOf(id)-1;if(S.cart[id]<=0)delete S.cart[id];refreshCart();}return;}
+    var r=e.target.closest('[data-rm]');if(r){delete S.cart[r.dataset.rm];refreshCart();return;}
+    var x=e.target.closest('[data-xs]');if(x){addToCart(+x.dataset.xs,1,false);return;}
+    if(e.target.id==='pay'){toast('Demo: aquí continúa el checkout de Shopify');}
+    if(e.target.id==='goShop'){closeCart();}
+  });
+  var lastFocus=null;
+  function openCart(){lastFocus=document.activeElement;drawer.classList.add('open');scrim.classList.add('open');drawer.setAttribute('aria-hidden','false');$('#closeCart').focus();}
+  function closeCart(){drawer.classList.remove('open');scrim.classList.remove('open');drawer.setAttribute('aria-hidden','true');if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+  $('#openCart').onclick=openCart;$('#closeCart').onclick=closeCart;scrim.onclick=closeCart;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&drawer.classList.contains('open'))closeCart();});
+
+  /* Paquete */
+  function renderPack(){
+    var tot=PACK.reduce(function(a,i){return a+byId[i].p;},0);
+    $('#packList').innerHTML=PACK.map(function(i){var p=byId[i];return '<li><span>'+p.b+' '+p.n+'</span><b>'+fmt(p.p)+'</b></li>';}).join('');
+    $('#packTotal').textContent=fmt(tot);$('#packMonth').textContent='o '+S.plan+' pagos de '+fmt(tot/S.plan)+'*';
+  }
+  $('#addPack').onclick=function(){PACK.forEach(function(i){addToCart(i,1,false);});openCart();};
+
+  /* Asesor, WhatsApp y boletín */
+  $('#advForm').onsubmit=function(e){e.preventDefault();var m=$('#advMsg').value||'quiero una recomendación';window.open(waLink('Hola, busco: '+$('#advInst').value+'. '+m),'_blank','noopener');};
+  $('#wafab').href=waLink('Hola, quiero asesoría para elegir un instrumento.');
+  $('#news').onsubmit=function(e){e.preventDefault();toast('Listo: tu cupón de 5% llegará a tu correo.');$('#nmail').value='';};
+
+  var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2600);}
+
+  renderGrid();refreshCart();
+})();
+</script>
+
+<script src="assets/cambios.js"></script>
+<script>
+(function(){
+  var C=window.CAMBIOS||[];var by={};C.forEach(function(c,i){c.n=i+1;by[c.id]=c;});
+  /* [selector, id de cambio]: dónde se ancla cada número */
+  var MAP=[['header.site .hrow','c1'],['.hero h1','c2'],['.finder h2','c3'],['#wafab','c4'],['.trust','c5'],['.search','c6'],
+           ['#catalogo .filters','c7'],['#grid .card:first-child .month','c8'],['#pdp .msi','c8'],['#pdp .facts','c9'],['#pdp .specs','c10'],
+           ['#pdp .info .stars','c5'],['#pdp .btn-wa','c4'],['.drawer .cross h3','c11'],['#paquete .pack h2','c12'],['.pays','c12']];
+  var on=false,pins={};
+  function mk(sel,id){
+    var el=document.querySelector(sel);if(!el)return;
+    if(el.querySelector(':scope > .whypin[data-c="'+id+'"]'))return;
+    var cs=getComputedStyle(el);if(cs.position==='static')el.classList.add('why-host');
+    var b=document.createElement('button');b.type='button';b.className='whypin';b.dataset.c=id;b.textContent=by[id]?by[id].n:'?';
+    b.setAttribute('aria-label','Por qué: '+(by[id]?by[id].titulo:id));
+    var fixed=cs.position==='fixed';
+    b.style.left=fixed?'-8px':'-12px';b.style.top=fixed?'-8px':'-12px';
+    el.appendChild(b);
+  }
+  function mount(){MAP.forEach(function(m){mk(m[0],m[1]);});}
+  var panel=document.createElement('div');panel.id='whyPanel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Por qué se hace este cambio');
+  document.body.appendChild(panel);
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function show(id){
+    var c=by[id];if(!c)return;
+    panel.innerHTML='<header><b class="n">'+c.n+'</b><div><small>'+esc(c.area)+'</small><h3>'+esc(c.titulo)+'</h3></div><button class="x" aria-label="Cerrar">✕</button></header>'+
+      '<section><b>Lo que se ve hoy</b><p>'+esc(c.problema)+'</p></section><section><b>Qué cambia aquí</b><p>'+esc(c.cambio)+'</p></section><section class="ok"><b>Por qué</b><p>'+esc(c.porque)+'</p></section>';
+    var dlg=document.getElementById('pdp');
+    (dlg&&dlg.open?dlg:document.body).appendChild(panel);
+    panel.classList.add('open');
+    document.querySelectorAll('.whypin').forEach(function(p){p.classList.toggle('on',p.dataset.c===id);});
+    try{parent.postMessage({type:'why-selected',id:id},'*');}catch(e){}
+  }
+  function hide(){panel.classList.remove('open');document.querySelectorAll('.whypin.on').forEach(function(p){p.classList.remove('on');});}
+  function set(v){on=!!v;document.body.classList.toggle('why-on',on);tg.setAttribute('aria-pressed',on);tg.querySelector('span').textContent=on?'Ocultar el porqué':'Ver el porqué de cada cambio';if(on)mount();else hide();}
+  var tg=document.createElement('button');tg.className='whytoggle';tg.type='button';tg.setAttribute('aria-pressed','false');
+  tg.innerHTML='<b aria-hidden="true">?</b><span>Ver el porqué de cada cambio</span>';document.body.appendChild(tg);
+  tg.onclick=function(){set(!on);};
+  document.addEventListener('click',function(e){
+    var p=e.target.closest('.whypin');if(p){e.preventDefault();e.stopPropagation();show(p.dataset.c);return;}
+    if(e.target.closest('#whyPanel .x'))hide();
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel.classList.contains('open')){hide();}});
+  var t;new MutationObserver(function(){if(!on)return;clearTimeout(t);t=setTimeout(mount,60);}).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('message',function(e){var d=e.data||{};if(d.type==='why')set(d.on);if(d.type==='why-show'){set(true);show(d.id);}});
+  if(/[?&]why=1/.test(location.search))set(true);
+  window.__why={set:set,show:show,hide:hide,mount:mount,map:MAP};
+})();
+</script>
+</body>
+</html>
